@@ -7,8 +7,6 @@ usage
 =====
 
 nyafind fairy tail 130
-----------------------
 
 nyafind bleach 345
-------------------
 
