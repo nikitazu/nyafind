@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'net/http'
-require 'rexml/document'
 require 'scrapi'
 
 class Anime
@@ -51,8 +50,8 @@ class Progress
 end
 
 
-def nya_list()
-  url = "http://myanimelist.net/animelist/nikitazu&status=1&order=0"
+def nya_list(login)
+  url = "http://myanimelist.net/animelist/#{login}&status=1&order=0"
   Net::HTTP.get_response(URI.parse(url)).body
 end
 
@@ -81,5 +80,5 @@ def nya_parse(html)
 end
 
 
-nya_parse(nya_list)
+nya_parse nya_list ARGV.first
 
