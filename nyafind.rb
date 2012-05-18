@@ -15,15 +15,24 @@ class Nya
     puts "downloads: #{self.down}"
     puts
   end
+
+  def initialize(xml)
+    self.title       = xml['title'].text
+    self.category    = xml['category'].text
+    self.link        = xml['link'].text
+    self.description = xml['description'].text
+
+    self.description.scan(/(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) downloads/i) do
+      self.seed = Integer($1)
+      self.leech = Integer($2)
+      self.down = Integer($3)
+    end
+ end
 end
 
 def nya_query(terms)
   query = terms.join('+')
   "http://www.nyaa.eu/?page=rss&term=#{query}"
-end
-
-def nya_query2(*terms)
-  nya_query(terms)
 end
 
 def nya_rss(url)
@@ -32,22 +41,8 @@ end
 
 def nya_parse(data)
   doc = REXML::Document.new(data)
-  doc.elements.each('rss/channel/item') do |e|
-    items           = e.elements
-    nya             = Nya.new
-
-    nya.title       = items['title'].text
-    nya.category    = items['category'].text
-    nya.link        = items['link'].text
-    nya.description = items['description'].text
-
-    nya.description.scan(/(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) downloads/i) do
-      nya.seed = Integer($1)
-      nya.leech = Integer($2)
-      nya.down = Integer($3)
-
-      yield(nya)
-    end
+  doc.elements.each('rss/channel/item') do |xml_item|
+    yield(Nya.new xml_item.elements)
   end
 end
 
@@ -74,8 +69,7 @@ def nya_filter(rss)
 end
 
 def main(terms)
-  rss = nya_rss nya_query terms
-  items = nya_filter rss
+  items = nya_filter nya_rss nya_query terms
   items.each { |nya| nya.print }
 end
 
