@@ -22,7 +22,8 @@ class Nya
     self.link        = xml['link'].text
     self.description = xml['description'].text
 
-    self.description.scan(/(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) downloads/i) do
+    re = /(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) downloads/i
+    self.description.scan(re) do
       self.seed = Integer($1)
       self.leech = Integer($2)
       self.down = Integer($3)
