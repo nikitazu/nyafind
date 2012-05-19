@@ -51,6 +51,12 @@ module Anime
         @max = $2
       end
       @anime = anime
+      if @current.nil?
+        @current = 0
+      end
+      if @max.nil?
+        @max = '-'
+      end
     end
     
     def next
