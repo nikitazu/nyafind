@@ -12,14 +12,15 @@ def main(login)
   
   Anime.load_and_parse(login) do |anime|
     puts "============================"
-    anime.print
+    anime.print_short
     puts "============================"
     puts "\n"
     
     query = "#{anime.title} #{anime.progress.next}"
     
     Torrent.load_and_parse(query.split(' ')) do |link|
-      link.print
+      link.print_short
+      puts "\n"
     end
   end
 end

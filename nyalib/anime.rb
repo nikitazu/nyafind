@@ -12,6 +12,14 @@ module Anime
       @is_airing
     end
     
+    def title_airing
+      if self.airing?
+        "#{@title} (Airing)"
+      else
+        @title
+      end
+    end
+    
     def initialize(row)
       row[1].scan(/\n(.+)$/i) do
         self.title = $1
@@ -39,6 +47,9 @@ module Anime
       end
     end
     
+    def print_short
+      puts "#{self.title_airing} [#{self.progress}]"
+    end
   end # Title
   
   

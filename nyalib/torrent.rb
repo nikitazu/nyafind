@@ -8,16 +8,6 @@ module Torrent
   class Link
     attr_accessor :title, :category, :link, :seed, :leech, :down, :description
     
-    def print
-      puts "title:     #{self.title}"
-      puts "category:  #{self.category}"
-      puts "link:      #{self.link}"
-      puts "seed:      #{self.seed}"
-      puts "leech:     #{self.leech}"
-      puts "downloads: #{self.down}"
-      puts
-    end
-    
     def initialize(xml)
       self.title       = xml['title'].text
       self.category    = xml['category'].text
@@ -32,6 +22,20 @@ module Torrent
       end
     end
     
+    def print
+      puts "title:     #{self.title}"
+      puts "category:  #{self.category}"
+      puts "link:      #{self.link}"
+      puts "seed:      #{self.seed}"
+      puts "leech:     #{self.leech}"
+      puts "downloads: #{self.down}"
+    end
+    
+    def print_short
+      puts "#{@title} (#{@seed}/#{leech})"
+      puts @link
+    end
+
   end # class Link
   
   
