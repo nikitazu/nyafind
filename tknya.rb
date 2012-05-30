@@ -5,55 +5,49 @@ require './nyalib/anime.rb'
 require './nyalib/torrent.rb'
 
 
-root = TkRoot.new { title "Hello, World!" }
+class NyaWindow
+  
+  def initialize
+    @nyaFont = TkFont.new( :family => 'Helvectica',
+                           :size => 20,
+                           :weight => :bold )
+    
+    @mewFont = TkFont.new( :family => 'Monospace',
+                           :size => 14 )                  
+    
+    @root = TkRoot.new { title "Hello, World!" }
+    
+    TkLabel.new(@root) do
+      text 'Nyanimate'
+      grid :row => 0, :column => 0
+      font @nyaFont
+    end
+  end
 
-TkLabel.new(root) do
-  text 'Nyanimate'
-  grid :row => 0, :column => 0
-end
+  def table(height, row)
+    [ self.listbox(50, 15, row, 0),
+      self.listbox(5, 15, row, 1),
+      self.listbox(5, 15, row, 2)
+    ]
+  end
 
-titles = TkListbox.new(root) do
-  width 40
-  height 15
-  selectmode :single
-  grid :row => 1, :column => 0
-end
+  def listbox(width, height, row, column)
+    TkListbox.new(@root) do
+      width width
+      height height
+      selectmode :single
+      grid :row => row, :column => column
+      font @mewFont
+    end
+  end
 
-currents = TkListbox.new(root) do
-  width 5
-  height 15
-  selectmode :single
-  grid :row => 1, :column => 1 
-end
+end #class
 
-totals = TkListbox.new(root) do
-  width 5
-  height 15
-  selectmode :single
-  grid :row => 1, :column => 2
-end
+window = NyaWindow.new
 
+titles, currents, totals = window.table(15, 1)
+torrents, seeds, leechs = window.table(15, 2)
 
-torrents = TkListbox.new(root) do
-  width 40
-  height 15
-  selectmode :single
-  grid :row => 2, :column => 0
-end
-
-seeds = TkListbox.new(root) do
-  width 5
-  height 15
-  selectmode :single
-  grid :row => 2, :column => 1
-end
-
-leechs = TkListbox.new(root) do
-  width 5
-  height 15
-  selectmode :single
-  grid :row => 2, :column => 2
-end
 
 Anime.load_and_parse('nikitazu') do |anime|
   titles.insert :end, anime.title
@@ -74,6 +68,7 @@ titles.bind('ButtonRelease-1') do
   
   Torrent.load_and_parse(query) do |link|
     torrents.insert :end, link.title
+    torrents.insert :end, link.link
     seeds.insert :end, link.seed
     leechs.insert :end, link.leech
   end
