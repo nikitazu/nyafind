@@ -1,13 +1,17 @@
 #!/usr/bin/env ruby
 
+# ======================================== #
+# Find animes at myanimelist.net and       #
+# lookup for their new series on torrents  #
+# ======================================== #
+
 require './nyalib/anime.rb'
 require './nyalib/torrent.rb'
 
 def main(login)
   if login.nil?
-    puts "ERROR: login not specified"
-    puts "USAGE: nyalookup mylogin"
-    exit(1)
+    login = `whoami`
+    login.strip!
   end
   
   Anime.load_and_parse(login) do |anime|
