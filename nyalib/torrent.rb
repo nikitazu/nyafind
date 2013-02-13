@@ -14,7 +14,7 @@ module Torrent
       self.link        = xml['link'].text
       self.description = xml['description'].text
       
-      re = /(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) downloads/i
+      re = /(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) download\(s\)/i
       self.description.scan(re) do
         self.seed = Integer($1)
         self.leech = Integer($2)
