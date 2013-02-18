@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 
-require './nyalib/anime.rb'
+$:.unshift(File.dirname(__FILE__) + '/nyalib')
+
+require 'anime.rb'
 
 def main(login)
   if login.nil?

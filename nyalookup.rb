@@ -5,8 +5,10 @@
 # lookup for their new series on torrents  #
 # ======================================== #
 
-require './nyalib/anime.rb'
-require './nyalib/torrent.rb'
+$:.unshift(File.dirname(__FILE__) + '/nyalib')
+
+require 'anime.rb'
+require 'torrent.rb'
 
 def main(login)
   if login.nil?
