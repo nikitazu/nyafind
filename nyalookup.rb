@@ -17,14 +17,13 @@ def main(login)
   end
   
   Anime.load_and_parse(login) do |anime|
-    anime.print_short
+    puts "#{anime[:title]} #{anime[:current]} / #{anime[:max]}"
     puts "============================================================"
     puts
-    
-    query = "#{anime.title} #{anime.progress.next}"
-    
+    query = "#{anime[:title]} #{Anime.progress_next_string(anime)}"
     Torrent.load_and_parse(query.split(' ')) do |link|
-      link.print_short
+      puts link[:title]
+      puts link[:link]
       puts
     end
   end

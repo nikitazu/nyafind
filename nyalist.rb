@@ -2,6 +2,7 @@
 
 $:.unshift(File.dirname(__FILE__) + '/nyalib')
 
+require 'json'
 require 'anime.rb'
 
 def main(login)
@@ -11,10 +12,11 @@ def main(login)
     exit(1)
   end
   
+  puts '['
   Anime.load_and_parse(login) do |anime|
-    anime.print
-    puts "\n"
+    puts anime.to_json, ','
   end
+  puts ']'
 end
 
 main ARGV.first

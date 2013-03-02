@@ -5,39 +5,39 @@ require 'rexml/document'
 
 module Torrent
   
-  class Link
-    attr_accessor :title, :category, :link, :seed, :leech, :down, :description
+  def Torrent.create_link(xml)
+    description = xml['description'].text
+    seed = 0
+    leech = 0
+    down = 0
     
-    def initialize(xml)
-      self.title       = xml['title'].text
-      self.category    = xml['category'].text
-      self.link        = xml['link'].text
-      self.description = xml['description'].text
-      
-      re = /(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) download\(s\)/i
-      self.description.scan(re) do
-        self.seed = Integer($1)
-        self.leech = Integer($2)
-        self.down = Integer($3)
-      end
+    re = /(\d+) seeder\(s\), (\d+) leecher\(s\), (\d+) download\(s\)/i
+    description.scan(re) do
+      seed = Integer($1)
+      leech = Integer($2)
+      down = Integer($3)
     end
     
-    def print
-      puts "title:     #{self.title}"
-      puts "category:  #{self.category}"
-      puts "link:      #{self.link}"
-      puts "seed:      #{self.seed}"
-      puts "leech:     #{self.leech}"
-      puts "downloads: #{self.down}"
-    end
-    
-    def print_short
-      puts "#{@title} (#{@seed}/#{leech})"
-      puts @link
-    end
-
-  end # class Link
+    return {
+      :title => xml['title'].text,
+      :category => xml['category'].text,
+      :link => xml['link'].text,
+      :description => description,
+      :seed => seed,
+      :leech => leech,
+      :down => down
+    }
+  end
   
+  def Torrent.matches_series(torrent, series)
+    temp = String.new(torrent[:title])
+    temp.gsub! /(\[[0-9a-f]+#{series}[0-9a-f]+\])/i, ''
+    temp.gsub! /1920x1080/, ''
+    temp.gsub! /1280x720/, ''
+    temp.gsub! /\[720p\]/, ''
+    temp.gsub! /320K+/, ''
+    return temp.include?(series)
+  end
   
   def Torrent.load_and_parse(terms)
     items = filter load query terms
@@ -50,14 +50,13 @@ module Torrent
   end
   
   def Torrent.load(url)
-    #puts url
     Net::HTTP.get_response(URI.parse(url)).body
   end
   
   def Torrent.parse(data)
     doc = REXML::Document.new(data)
     doc.elements.each('rss/channel/item') do |xml_item|
-      yield(Link.new xml_item.elements)
+      yield(create_link xml_item.elements)
     end
   end
   
@@ -67,8 +66,8 @@ module Torrent
     seeders  = 0
     
     parse (rss) do |nya|
-      if nya.seed > 0
-        seed_sum += nya.seed
+      if nya[:seed] > 0
+        seed_sum += nya[:seed]
         seeders  += 1
         items << nya
       end
@@ -76,10 +75,10 @@ module Torrent
 
     if seeders > 0
       seed_avg = seed_sum / seeders
-      items = items.find_all { |nya| nya.seed >= seed_avg }
+      items = items.find_all { |nya| nya[:seed] >= seed_avg }
     end
     
-    sorted = items.sort_by { |nya| nya.seed }
+    sorted = items.sort_by { |nya| nya[:seed] }
     sorted.reverse
   end
   
