@@ -5,7 +5,7 @@ require 'nokogiri'
 
 module Anime
   
-  def Anime.create_title(row)
+  def Anime.create_title(row, link)
     title = ''
     airing = false
     current = 0
@@ -34,7 +34,8 @@ module Anime
       :score    => row[2], 
       :type     => row[3], 
       :current  => current,
-      :max      => max
+      :max      => max,
+      :link     => link
     }
   end
   
@@ -84,13 +85,20 @@ module Anime
       data << td.content
     end
     
+    links = []
+    doc.css('html>body>div#list_surround a.animetitle').each do |a|
+      links << a.attr('href')
+    end
+    
+    index = 0
     data = data.drop(13)
     columns = 6
     stop = false
     table = []
     while not data.length < columns do
-      table << create_title(data.take(columns))
+      table << create_title(data.take(columns), links[index])
       data = data.drop(columns)
+      index = index + 1
     end
     
     table.each do |anime|
@@ -98,6 +106,12 @@ module Anime
     end
   
   end #parse
+  
+  def Anime.extract_image(link)
+    html = Net::HTTP.get_response(URI.parse(link)).body
+    doc = Nokogiri::HTML(html)
+    puts doc.css('div#content table tr td.borderClass img').first.attr('src')
+  end
 
 end # Nya module
 
