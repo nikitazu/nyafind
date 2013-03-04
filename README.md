@@ -13,7 +13,7 @@ usage
 * nyafind bleach 345
 * nyalist mylogin
 * nyalookup mylogin
-* nyaimage http://myanimelist.net/lint/to/anime/page
+* nyaimage http://myanimelist.net/anime/14075/Zetsuen_no_Tempest
 
 requires
 ========

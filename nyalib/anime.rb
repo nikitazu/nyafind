@@ -110,7 +110,7 @@ module Anime
   def Anime.extract_image(link)
     html = Net::HTTP.get_response(URI.parse(link)).body
     doc = Nokogiri::HTML(html)
-    puts doc.css('div#content table tr td.borderClass img').first.attr('src')
+    doc.css('div#content table tr td.borderClass img').first.attr('src')
   end
 
 end # Nya module

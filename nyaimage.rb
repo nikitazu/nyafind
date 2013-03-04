@@ -13,7 +13,7 @@ def main(link)
   end
   
   image = Anime.extract_image(link)
-  puts image
+  puts image.strip
 end
 
 main ARGV.first
