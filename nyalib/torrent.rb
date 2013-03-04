@@ -34,8 +34,9 @@ module Torrent
     temp.gsub! /(\[[0-9a-f]+#{series}[0-9a-f]+\])/i, ''
     temp.gsub! /1920x1080/, ''
     temp.gsub! /1280x720/, ''
-    temp.gsub! /\[720p\]/, ''
+    temp.gsub! /720p/, ''
     temp.gsub! /320K+/, ''
+    temp.gsub! /HDTV-720/, ''
     return temp.include?(series)
   end
   
