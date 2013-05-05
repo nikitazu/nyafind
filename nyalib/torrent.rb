@@ -31,7 +31,8 @@ module Torrent
   
   def Torrent.matches_series(torrent, series)
     temp = String.new(torrent[:title])
-    temp.gsub! /(\[[0-9a-f]+#{series}[0-9a-f]+\])/i, ''
+    #temp.gsub! /(\[[0-9a-f]+#{series}[0-9a-f]+\])/i, ''
+    temp.gsub! /\[[\d|\w]+\]/i, ''
     temp.gsub! /1920x1080/, ''
     temp.gsub! /1280x720/, ''
     temp.gsub! /720p/, ''
