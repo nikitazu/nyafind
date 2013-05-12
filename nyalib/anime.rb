@@ -63,15 +63,15 @@ module Anime
     end
   end
   
-  def Anime.load_and_parse(login)
-    data = load_url(login)
+  def Anime.load_and_parse(login, status_id)
+    data = load_url(login, status_id)
     parse(data) do |anime|
       yield(anime)
     end
   end
   
-  def Anime.load_url(login)
-    url = "http://myanimelist.net/animelist/#{login}&status=1&order=0"
+  def Anime.load_url(login, status_id)
+    url = "http://myanimelist.net/animelist/#{login}&status=#{status_id}&order=0"
     Net::HTTP.get_response(URI.parse(url)).body
   end
   
