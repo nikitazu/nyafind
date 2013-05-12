@@ -39,9 +39,12 @@ module Anime
     if status == 'completed'
       current = max  = Integer(row[4])
     else
-      row[4].scan(/^(\d+)\/(\d+|-)/) do
-        current = Integer($1)
+      row[4].scan(/^([\d+|-])\/(\d+|-)/) do
+        current = $1
         max = $2
+        if current == '-'
+          current = 0
+        end
         if max == '-'
           max = 0
         end
