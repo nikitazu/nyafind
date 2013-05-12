@@ -4,8 +4,24 @@ require 'net/http'
 require 'nokogiri'
 
 module Anime
+
+  STATUSES = {
+    'pending' => 6,
+    'watching' => 1,
+    'completed' => 2,
+    'onhold' => 3,
+    'dropped' => 4
+  }
   
-  def Anime.create_title(row, link)
+  def Anime.status_id(status)
+    id = STATUSES[status]
+    if id.nil?
+      id = 1
+    end
+    return id
+  end
+  
+  def Anime.create_title(row, link, status)
     title = ''
     airing = false
     current = 0
@@ -20,11 +36,15 @@ module Anime
       airing = true
     end
 
-    row[4].scan(/^(\d+)\/(\d+|-)/) do
-      current = Integer($1)
-      max = $2
-      if max == '-'
-        max = 0
+    if status == 'completed'
+      current = max  = Integer(row[4])
+    else
+      row[4].scan(/^(\d+)\/(\d+|-)/) do
+        current = Integer($1)
+        max = $2
+        if max == '-'
+          max = 0
+        end
       end
     end
     
@@ -63,20 +83,21 @@ module Anime
     end
   end
   
-  def Anime.load_and_parse(login, status_id)
-    data = load_url(login, status_id)
-    parse(data) do |anime|
+  def Anime.load_and_parse(login, status)
+    html = load_url(login, status)
+    parse(html, status) do |anime|
       yield(anime)
     end
   end
   
-  def Anime.load_url(login, status_id)
-    url = "http://myanimelist.net/animelist/#{login}&status=#{status_id}&order=0"
+  def Anime.load_url(login, status)
+    id = status_id(status)
+    url = "http://myanimelist.net/animelist/#{login}&status=#{id}&order=0"
     Net::HTTP.get_response(URI.parse(url)).body
   end
   
   
-  def Anime.parse(html)
+  def Anime.parse(html, status)
     
     doc = Nokogiri::HTML(html)
     
@@ -96,7 +117,7 @@ module Anime
     stop = false
     table = []
     while not data.length < columns do
-      table << create_title(data.take(columns), links[index])
+      table << create_title(data.take(columns), links[index], status)
       data = data.drop(columns)
       index = index + 1
     end
